@@ -295,7 +295,8 @@ class diff_match_patch {
    */
  private:
   template<typename string2, typename traits2> friend class diff_match_patch;
-  typedef typename diff_match_patch<std::basic_string<size_t> > size_t_diff_match_patch;
+  template<typename T, typename> struct first { typedef T type; };
+  // typedef typename first<diff_match_patch<std::basic_string<size_t> > >::type size_t_diff_match_patch;
 
   static void diff_main(const string_t &text1, const string_t &text2, bool checklines, clock_t deadline, Diffs& diffs) {
     diffs.clear();
@@ -422,8 +423,8 @@ class diff_match_patch {
     Lines linearray;
     diff_linesToChars(text1, text2, linearray);
 
-    typename size_t_diff_match_patch line_diff_match_patch;
-    typename size_t_diff_match_patch::Diffs line_diffs;
+    typename first<diff_match_patch<std::basic_string<size_t> > >::type line_diff_match_patch;
+    typename first<diff_match_patch<std::basic_string<size_t> >::Diffs>::type line_diffs;
     line_diff_match_patch.diff_main(linearray.text1, linearray.text2, false, deadline, line_diffs);
 
     // Convert the diff back to original text.
