@@ -295,8 +295,7 @@ class diff_match_patch {
    */
  private:
   template<typename string2, typename traits2> friend class diff_match_patch;
-  template<typename T, typename> struct first { typedef T type; };
-  // typedef typename first<diff_match_patch<std::basic_string<size_t> > >::type size_t_diff_match_patch;
+  typedef typename diff_match_patch<std::basic_string<size_t> > size_t_diff_match_patch;
 
   static void diff_main(const string_t &text1, const string_t &text2, bool checklines, clock_t deadline, Diffs& diffs) {
     diffs.clear();
@@ -423,8 +422,8 @@ class diff_match_patch {
     Lines linearray;
     diff_linesToChars(text1, text2, linearray);
 
-    typename first<diff_match_patch<std::basic_string<size_t> >, stringT>::type line_diff_match_patch;
-    typename first<diff_match_patch<std::basic_string<size_t> >::Diffs, stringT>::type line_diffs;
+    typename size_t_diff_match_patch line_diff_match_patch;
+    typename size_t_diff_match_patch::Diffs line_diffs;
     line_diff_match_patch.diff_main(linearray.text1, linearray.text2, false, deadline, line_diffs);
 
     // Convert the diff back to original text.
@@ -683,9 +682,9 @@ class diff_match_patch {
    * @param lineArray List of pointers to unique strings.
    */
  private:
-  static Diffs diff_charsToLines(const typename first<diff_match_patch<std::basic_string<size_t> >::Diffs, stringT>::type &line_diffs, const Lines& lineArray) {
+  static Diffs diff_charsToLines(const typename size_t_diff_match_patch::Diffs &line_diffs, const Lines& lineArray) {
     Diffs diffs;
-    for (typename first<diff_match_patch<std::basic_string<size_t> >::Diffs, stringT>::type::const_iterator cur_diff = line_diffs.begin(); cur_diff != line_diffs.end(); ++cur_diff) {
+    for (typename size_t_diff_match_patch::Diffs::const_iterator cur_diff = line_diffs.begin(); cur_diff != line_diffs.end(); ++cur_diff) {
       string_t text;
       for (size_t y = 0; y < cur_diff->text.length(); y++) {
         const LinePtr& lp = lineArray[cur_diff->text[y]];
