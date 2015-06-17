@@ -68,9 +68,9 @@ ostream& operator<<(ostream& o, const wastring& s)
   return o;
 }
 
-std::basic_string<size_t> make_size_t_string(const char * s)
+std::basic_string<int64_t> make_size_t_string(const char * s)
 {
-  std::basic_string<size_t> str;
+  std::basic_string<int64_t> str;
   for (const char * c = s; *c != 0; c++)
     str.push_back(*c);
   return str;
@@ -255,7 +255,7 @@ class diff_match_patch_test : diff_match_patch<string> {
     assertEquals("diff_charsToLines:", Diff(EQUAL, "a"), Diff(EQUAL, "a"));
 
     // Convert chars up to lines.
-    typedef diff_match_patch<std::basic_string<size_t> > line_dmp; 
+    typedef diff_match_patch<std::basic_string<int64_t> > line_dmp; 
     line_dmp::Diffs line_diffs;
     line_diffs.push_back(line_dmp::Diff(line_dmp::EQUAL, make_size_t_string("\1\2\1")));
     line_diffs.push_back(line_dmp::Diff(line_dmp::INSERT, make_size_t_string("\2\1\2")));

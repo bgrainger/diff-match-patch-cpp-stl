@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
 #include <cwchar>
 #include <time.h>
@@ -295,7 +296,7 @@ class diff_match_patch {
    */
  private:
   template<typename string2, typename traits2> friend class diff_match_patch;
-  typedef typename diff_match_patch<std::basic_string<size_t> > size_t_diff_match_patch;
+  typedef typename diff_match_patch<std::basic_string<int64_t> > size_t_diff_match_patch;
 
   static void diff_main(const string_t &text1, const string_t &text2, bool checklines, clock_t deadline, Diffs& diffs) {
     diffs.clear();
@@ -635,10 +636,10 @@ class diff_match_patch {
     bool operator<(const LinePtr& p) const
       { return this->second < p.second? true : this->second > p.second? false : string_t::traits_type::compare(this->first, p.first, this->second) < 0; }
   };
-  struct Lines : std::vector<LinePtr> { std::basic_string<size_t> text1, text2; };
+  struct Lines : std::vector<LinePtr> { std::basic_string<int64_t> text1, text2; };
 
   static void diff_linesToChars(const string_t &text1, const string_t &text2, Lines& lineArray) {
-    std::map<LinePtr, size_t> lineHash;
+    std::map<LinePtr, int64_t> lineHash;
     // e.g. linearray[4] == "Hello\n"
     // e.g. linehash.get("Hello\n") == 4
 
@@ -649,7 +650,7 @@ class diff_match_patch {
     lineArray.text2 = diff_linesToCharsMunge(text2, lineHash);
 
     lineArray.resize(lineHash.size() + 1);
-    for (typename std::map<LinePtr, size_t>::const_iterator i = lineHash.begin(); i != lineHash.end(); ++i)
+    for (typename std::map<LinePtr, int64_t>::const_iterator i = lineHash.begin(); i != lineHash.end(); ++i)
       lineArray[(*i).second] = (*i).first;
   }
 
@@ -661,8 +662,8 @@ class diff_match_patch {
    * @return Encoded string.
    */
  private:
-  static std::basic_string<size_t> diff_linesToCharsMunge(const string_t &text, std::map<LinePtr, size_t> &lineHash) {
-    std::basic_string<size_t> chars;
+  static std::basic_string<int64_t> diff_linesToCharsMunge(const string_t &text, std::map<LinePtr, int64_t> &lineHash) {
+    std::basic_string<int64_t> chars;
     // Walk the text, pulling out a substring for each line.
     // text.split('\n') would would temporarily double our memory footprint.
     // Modifying text would create many large strings to garbage collect.
@@ -2595,16 +2596,16 @@ template <> struct diff_match_patch_traits<char> : diff_match_patch_utf32_direct
   static const char tab = '\t';
 };
 
-template <> struct diff_match_patch_traits<size_t> : diff_match_patch_utf32_direct<size_t> {
-  static bool is_alnum(size_t c) { return false; }
-  static bool is_digit(size_t c) { return false; }
-  static bool is_space(size_t c) { return false; }
+template <> struct diff_match_patch_traits<int64_t> : diff_match_patch_utf32_direct<int64_t> {
+  static bool is_alnum(int64_t c) { return false; }
+  static bool is_digit(int64_t c) { return false; }
+  static bool is_space(int64_t c) { return false; }
   static int to_int(const char* s) { return 0; }
-  static size_t from_wchar(wchar_t c) { return static_cast<size_t>(c); }
-  static wchar_t to_wchar(size_t c) { return static_cast<wchar_t>(c); }
-  static std::basic_string<size_t> cs(const wchar_t* s) { return std::basic_string<size_t>(s, s + wcslen(s)); }
-  static const size_t eol = '\n';
-  static const size_t tab = '\t';
+  static int64_t from_wchar(wchar_t c) { return static_cast<int64_t>(c); }
+  static wchar_t to_wchar(int64_t c) { return static_cast<wchar_t>(c); }
+  static std::basic_string<int64_t> cs(const wchar_t* s) { return std::basic_string<int64_t>(s, s + wcslen(s)); }
+  static const int64_t eol = '\n';
+  static const int64_t tab = '\t';
 };
 
 #endif // DIFF_MATCH_PATCH_H
